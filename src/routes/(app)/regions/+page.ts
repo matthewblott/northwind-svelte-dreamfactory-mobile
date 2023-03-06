@@ -1,5 +1,5 @@
 import { navigating } from '$app/stores'
-import { Supplier as data } from '$lib/data/supplier'
+import { Region as data } from '$lib/data/region'
 import { error } from '@sveltejs/kit'
 import type { PageLoad } from './$types'
 

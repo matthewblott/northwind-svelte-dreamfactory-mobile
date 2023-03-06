@@ -10,6 +10,10 @@
 	import { goto } from '$app/navigation'
 	import CustomerRegions from '$lib/components/CustomerRegions.svelte'
 	import Validation from '$lib/components/Validation.svelte'
+	import TextField from '$lib/components/TextField.svelte'
+	import SaveButton from '$lib/components/SaveButton.svelte'
+	import CancelButton from '$lib/components/CancelButton.svelte'
+	import DeleteButton from '$lib/components/DeleteButton.svelte'
 
 	const { form } = createForm<Customer>({
 		initialValues: data,
@@ -47,54 +51,25 @@
 	}
 </script>
 
-<h1>Customer</h1>
-
 <form use:form>
-	<button on:click|preventDefault={save}><Save /> Save</button>
-	<button on:click|preventDefault={remove}><Delete /> Delete</button>
-	<button on:click|preventDefault={cancel}><XSquare /> Cancel</button>
-	<div class="filler" />
-	<fieldset>
-		<label for="CustomerId">Id</label>
-		<input id="CustomerId" name="CustomerId" readonly />
-		<label for="CompanyName">Name</label>
-		<input id="CompanyName" name="CompanyName" />
-		<Validation name="CompanyName" />
+	<ion-item>
+		<SaveButton />
+		<DeleteButton on:click={remove} />
+		<CancelButton on:click={cancel} />
+	</ion-item>
+	<ion-item>
+		<ion-label position="stacked">Id</ion-label>
+		<ion-input name="CustomerId" value={data.CustomerId} readonly />
+	</ion-item>
 
-		<label for="ContactName">Contact</label>
-		<input id="ContactName" name="ContactName" /><br />
-		<Validation name="ContactName" />
-
-		<label for="ContactTitle">Contact Title</label>
-		<input id="ContactTitle" name="ContactTitle" /><br />
-		<Validation name="ContactTitle" />
-
-		<label for="Address">Address</label>
-		<input id="Address" name="Address" /><br />
-		<Validation name="Address" />
-
-		<label for="City">City</label>
-		<input id="City" name="City" /><br />
-		<Validation name="City" />
-
-		<CustomerRegions value={region} />
-
-		<label for="PostalCode">Postal Code</label>
-		<input id="PostalCode" name="PostalCode" /><br />
-		<Validation name="PostalCode" />
-
-		<label for="Country">Country</label>
-		<input id="Country" name="Country" /><br />
-		<Validation name="Country" />
-
-		<label for="Phone">Phone</label>
-		<input id="Phone" name="Phone" /><br />
-		<Validation name="Phone" />
-
-		<label for="Fax">Fax</label>
-		<input id="Fax" name="Fax" /><br />
-		<Validation name="Fax" />
-	</fieldset>
-	<button type="submit" class="hidden" />
-	<button type="reset" class="hidden" />
+	<TextField name="CompanyName" value={data.CompanyName} />
+	<TextField name="ContactName" value={data.ContactName} />
+	<TextField name="ContactTitle" value={data.ContactTitle} />
+	<TextField name="Address" value={data.Address} />
+	<TextField name="City" value={data} />
+	<CustomerRegions value={region} />
+	<TextField name="PostalCode" value={data.PostalCode} />
+	<TextField name="Country" value={data.Country} />
+	<TextField name="Phone" value={data.Phone} />
+	<TextField name="Fax" value={data.Fax} />
 </form>

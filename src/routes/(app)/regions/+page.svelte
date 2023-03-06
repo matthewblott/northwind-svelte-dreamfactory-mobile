@@ -1,49 +1,43 @@
-<script>
-	import { Region } from '$lib/data/region'
+<script lang="ts">
 	import { Edit, PlusSquare } from 'lucide-svelte'
-	import { onMount } from 'svelte'
+	import { goto } from '$app/navigation'
+	import { fetchData } from './store'
+	import type { PageData } from './$types'
 	import Pager from '$lib/components/Pager.svelte'
 
-	let promise = Promise.resolve([])
+	export let data: PageData
 
-	$: items = []
+	$: promise = data
+	$: count = promise.meta.count
 
-	onMount(async () => {
-		promise = await Region.fetchAll()
-		items = promise.resource
-	})
+	const next = async (args: any) => {
+		const offset = args.detail.offset
+		const limit = 10
+		const url = `?limit=${limit}&offset=${offset}`
+
+		goto(url)
+
+		promise = await fetchData(limit, offset)
+		count = promise.meta.count
+	}
 </script>
 
-<h1>Regions</h1>
+<Pager limit={10} {count} on:next={next} />
 
 {#await promise}
-	<p>Loading ...</p>
-{:then}
-	{#if items}
-		<Pager />
-		<table role="grid">
-			<thead>
-				<th scope="col"> Id </th>
-				<th scope="col">Description</th>
-				<th>
-					<a href="#" disabled><PlusSquare /></a>
-				</th>
-			</thead>
-			<tbody>
-				{#each items as { RegionId, RegionDescription }}
-					<tr>
-						<th scope="row">
-							{RegionId}
-						</th>
-						<td>{RegionDescription}</td>
-						<td>
-							<a href="/regions/{RegionId}"><Edit /></a>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-	{/if}
+	<p>waiting for the promise to resolve...</p>
+{:then value}
+	<ion-list>
+		<ion-item>
+			<a href="#" disabled><PlusSquare /></a> New
+		</ion-item>
+		{#each value.resource as { RegionId, RegionDescription }}
+			<ion-item>
+				<a href="/regions/{RegionId}"><Edit /></a>
+				{RegionDescription}
+			</ion-item>
+		{/each}
+	</ion-list>
 {:catch error}
-	<p>Something went wrong: {error.message}</p>
+	{error}
 {/await}

@@ -8,6 +8,6 @@
 
 <ion-item>
 	<ion-label position="stacked">{capitalCase(name)}</ion-label>
-	<ion-input {value} {name} type="password" />
+	<ion-textarea {value} {name} rows="5" />
 	<Validation {name} />
 </ion-item>

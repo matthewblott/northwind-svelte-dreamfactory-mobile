@@ -22,34 +22,22 @@
 	}
 </script>
 
-<h1>Territories</h1>
 <Pager limit={10} {count} on:next={next} />
 
 {#await promise}
 	<p>waiting for the promise to resolve...</p>
 {:then value}
-	<table role="grid">
-		<thead>
-			<th scope="col"> Id </th>
-			<th scope="col">Name</th>
-			<th>
-				<a href="/territories/new"><PlusSquare /></a>
-			</th>
-		</thead>
-		<tbody>
-			{#each value.resource as { TerritoryId, TerritoryDescription }}
-				<tr>
-					<td scope="row">
-						{TerritoryId}
-					</td>
-					<td>{TerritoryDescription}</td>
-					<td>
-						<a href="/territories/{TerritoryId}"><Edit /></a>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
+	<ion-list>
+		<ion-item>
+			<a href="/territories/new"><PlusSquare /></a> New
+		</ion-item>
+		{#each value.resource as { TerritoryId, TerritoryDescription }}
+			<ion-item>
+				<a href="/territories/{TerritoryId}"><Edit /></a>
+				{TerritoryDescription}
+			</ion-item>
+		{/each}
+	</ion-list>
 {:catch error}
 	{error}
 {/await}

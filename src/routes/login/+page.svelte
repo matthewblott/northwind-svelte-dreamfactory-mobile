@@ -24,13 +24,16 @@
 	})
 </script>
 
-<h1>Login</h1>
+<ion-header>
+	<ion-toolbar>
+		<ion-title>Login</ion-title>
+	</ion-toolbar>
+</ion-header>
 
 <form use:form>
-	<div class="filler" />
-	<fieldset>
-		<TextField name="email" value="read_write@northwi.nd" />
-		<PasswordField name="password" />
-		<button>Submit</button>
-	</fieldset>
+	<TextField name="email" value="read_write@northwi.nd" />
+	<PasswordField name="password" value="password" />
+	<ion-item>
+		<ion-button type="submit" size="default">Submit</ion-button>
+	</ion-item>
 </form>

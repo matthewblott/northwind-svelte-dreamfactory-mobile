@@ -1,8 +1,15 @@
-<script>
-	import '@picocss/pico/css/pico.min.css'
-	import '../app.css'
+<script lang="ts">
 	import { SafeArea } from 'capacitor-plugin-safe-area'
 	import { onMount } from 'svelte'
+	import { IonPage } from 'ionic-svelte'
+	import { setupIonicBase } from 'ionic-svelte'
+
+	setupIonicBase()
+
+	/* Import all components - or do partial loading - see below */
+	import 'ionic-svelte/components/all'
+
+	import '../theme/variables.css'
 
 	let title = 'Home'
 
@@ -19,4 +26,12 @@
 	<title>{title}</title>
 </svelte:head>
 <div style="height: {height}px" />
-<slot />
+<a href="/" style="text-decoration: none;">home</a>
+
+<ion-app>
+	<ion-content>
+		<IonPage>
+			<slot />
+		</IonPage>
+	</ion-content>
+</ion-app>

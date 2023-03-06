@@ -1,55 +1,55 @@
 <script lang="ts">
-	import { Edit, PlusSquare } from 'lucide-svelte'
-	import { goto } from '$app/navigation'
-	import { fetchData } from './store'
-	import type { PageData } from './$types'
-	import Pager from '$lib/components/Pager.svelte'
+	import { Order as data } from '$lib/data/order'
+	import { onMount } from 'svelte'
 
-	export let data: PageData
+	let list: any
 
-	$: promise = data
-	$: count = promise.meta.count
+	const limit = 15
+	let totalLimit = limit
 
-	const next = async (args: any) => {
-		const offset = args.detail.offset
-		const limit = 10
-		const url = `?limit=${limit}&offset=${offset}`
+	let offset = 0
 
-		goto(url)
+	const generateItems = async () => {
+		const count = list.childElementCount + 1
 
-		promise = await fetchData(limit, offset)
-		count = promise.meta.count
+		if (count === totalLimit + 1) {
+			return
+		}
+
+		const promise = await data.fetchPaged(limit, offset)
+		const items = promise.resource
+
+		totalLimit = promise.meta.count
+
+		offset = limit + offset
+
+		items.forEach((item: any) => {
+			const el = document.createElement('ion-item')
+
+			const text = document.createElement('ion-label')
+
+			text.textContent = `# ${item.OrderId}`
+
+			el.appendChild(text)
+
+			list.appendChild(el)
+		})
 	}
+
+	const scroll = (event: any) => {
+		generateItems()
+		event.target.complete()
+	}
+
+	onMount(() => {
+		list = document.querySelector('#my-list')
+
+		generateItems()
+	})
 </script>
 
-<h1>Order</h1>
-<Pager limit={10} {count} on:next={next} />
+<ion-list id="my-list" />
 
-{#await promise}
-	<p>waiting for the promise to resolve...</p>
-{:then value}
-	<table role="grid">
-		<thead>
-			<th scope="col"> Id </th>
-			<th scope="col">Name</th>
-			<th>
-				<a href="/order/new"><PlusSquare /></a>
-			</th>
-		</thead>
-		<tbody>
-			{#each value.resource as { OrderId, OrderDate }}
-				<tr>
-					<td scope="row">
-						{OrderId}
-					</td>
-					<td>{OrderDate}</td>
-					<td>
-						<a href="/order/{OrderId}"><Edit /></a>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-{:catch error}
-	{error}
-{/await}
+<ion-infinite-scroll on:ionInfinite={scroll}>
+	<ion-infinite-scroll-content />
+</ion-infinite-scroll>

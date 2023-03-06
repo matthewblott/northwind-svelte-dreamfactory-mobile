@@ -1,5 +1,5 @@
 import { Base as data } from './base.ts'
-import { Category as schema } from '$lib/schema/category'
+import type { Category as schema } from '$lib/schema/category'
 
 export const Category: any = {}
 
@@ -37,8 +37,9 @@ Category.create = async (item: schema) => {
 Category.update = async (item: schema) => {
 	const id = item.CategoryId
 	const body = JSON.stringify(item)
+	const json = await data.update(table_name, id, body)
 
-	data.update(table_name, id, body)
+	return json.CategoryId
 }
 
 Category.remove = async (id: number) => {

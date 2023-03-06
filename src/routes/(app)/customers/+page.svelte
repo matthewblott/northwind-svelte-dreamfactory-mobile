@@ -1,56 +1,56 @@
 <script lang="ts">
-	import { Edit, PlusSquare } from 'lucide-svelte'
-	import { goto } from '$app/navigation'
-	import { fetchData } from './store'
-	import type { PageData } from './$types'
-	import Pager from '$lib/components/Pager.svelte'
+	import { Customer as data } from '$lib/data/customer'
+	import { onMount } from 'svelte'
+	import type { IonList } from '@ionic/core/components/ion-list'
+	import type { IonItem } from '@ionic/core/components/ion-item'
+	import type { IonLabel } from '@ionic/core/components/ion-label'
+	// import { logoIonic } from 'ionicons/icons'
+	import ListItem from '$lib/components/ListItem.svelte'
 
-	export let data: PageData
+	const limit = 15
+	let totalLimit = limit
+	let offset = 0
 
-	$: promise = data
-	$: count = promise.meta.count
+	const generateItems = async () => {
+		if (offset >= totalLimit) {
+			return
+		}
 
-	const next = async (args: any) => {
-		const offset = args.detail.offset
-		const limit = 10
-		const url = `?limit=${limit}&offset=${offset}`
+		const promise = await data.fetchPaged(limit, offset)
+		const items = promise.resource
 
-		goto(url)
+		totalLimit = promise.meta.count
 
-		promise = await fetchData(limit, offset)
-		count = promise.meta.count
+		offset = limit + offset
+
+		items.forEach((item: any) => {
+			const list = document.querySelector('#my-list') as IonList
+			const el = document.createElement('ion-item') as IonItem
+			const label = document.createElement('ion-label') as IonLabel
+
+			label.textContent = item.CompanyName
+			el.appendChild(label)
+			list.appendChild(el)
+		})
 	}
+
+	const scroll = (event: any) => {
+		generateItems()
+		event.target.complete()
+	}
+
+	onMount(() => {
+		generateItems()
+	})
 </script>
 
-<h1>Customers</h1>
+<ion-list id="my-list" />
 
-<Pager limit={10} {count} on:next={next} />
+<!-- <ion-item> -->
+<!-- 	<ion-icon slot="end" icon={logoIonic} /> -->
+<!-- 	<ion-label>Label with icon</ion-label> -->
+<!-- </ion-item> -->
 
-{#await promise}
-	<p>waiting for the promise to resolve...</p>
-{:then value}
-	<table role="grid">
-		<thead>
-			<th scope="col"> Id </th>
-			<th scope="col">Name</th>
-			<th>
-				<a href="/customers/new"><PlusSquare /></a>
-			</th>
-		</thead>
-		<tbody>
-			{#each value.resource as { CustomerId, CompanyName }}
-				<tr>
-					<th scope="row">
-						{CustomerId}
-					</th>
-					<td>{CompanyName}</td>
-					<td>
-						<a href="/customers/{CustomerId}"><Edit /></a>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-{:catch error}
-	{error}
-{/await}
+<ion-infinite-scroll on:ionInfinite={scroll}>
+	<ion-infinite-scroll-content />
+</ion-infinite-scroll>

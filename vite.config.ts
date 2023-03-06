@@ -1,8 +1,16 @@
-import { sveltekit } from '@sveltejs/kit/vite';
-import type { UserConfig } from 'vite';
+import { sveltekit } from '@sveltejs/kit/vite'
+import { defineConfig } from 'vite'
+// import { resolve } from 'path'
 
-const config: UserConfig = {
+export default defineConfig({
 	plugins: [sveltekit()]
-};
-
-export default config;
+	// server: { port: 5173 },
+	// alias: {
+	// 	$lib: resolve('./src/lib'),
+	// 	$components: resolve('./src/components'),
+	// 	$services: resolve('./src/services'),
+	// 	$routes: resolve('./src/routes'),
+	// 	$static: resolve('./src/static'),
+	// 	$ionic: resolve('./src/lib/ionic')
+	// }
+})

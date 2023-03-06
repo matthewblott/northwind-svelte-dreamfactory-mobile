@@ -10,6 +10,13 @@
 	}
 </script>
 
-<label for={name}>{capitalCase(name)}</label>
-<input type="date" {name} id={name} {value} on:input={fix} />
-<Validation {name} />
+<ion-item>
+	<ion-label position="stacked">{capitalCase(name)}</ion-label>
+	<ion-datetime-button datetime="datetime" />
+
+	<ion-modal>
+		<ion-datetime id="datetime" presentation="date" {value} />
+	</ion-modal>
+
+	<Validation {name} />
+</ion-item>

@@ -1,10 +1,10 @@
 import { writable } from 'svelte/store'
-import type { Supplier } from '$lib/schema/supplier'
+import type { Region } from '$lib/schema/region'
 
-import { Supplier as data } from '$lib/data/supplier'
+import { Region as data } from '$lib/data/region'
 import { error } from '@sveltejs/kit'
 
-export let store = writable<Supplier[]>([])
+export let store = writable<Region[]>([])
 
 export async function fetchData(limit: number, offset: number) {
 	return await data.fetchPaged(limit, offset)

@@ -23,18 +23,17 @@
 </script>
 
 <Pager limit={10} {count} on:next={next} />
-
 {#await promise}
 	<p>waiting for the promise to resolve...</p>
 {:then value}
 	<ion-list>
 		<ion-item>
-			<a href="/categories/new"><PlusSquare /></a> New
+			<a href="/customers/new"><PlusSquare /></a> New
 		</ion-item>
-		{#each value.resource as { CategoryId, CategoryName }}
+		{#each value.resource as { CustomerId, CompanyName }}
 			<ion-item>
-				<a href="/categories/{CategoryId}"><Edit /></a>
-				{CategoryName}
+				<a href="/customers/{CustomerId}"><Edit /></a>
+				{CompanyName}
 			</ion-item>
 		{/each}
 	</ion-list>

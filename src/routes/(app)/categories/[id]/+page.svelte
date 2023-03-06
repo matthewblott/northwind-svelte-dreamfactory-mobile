@@ -1,74 +1,47 @@
 <script lang="ts">
 	export let data: any
-
-	import { Save, Delete, XSquare } from 'lucide-svelte'
-	import { Category as schema } from '$lib/schema/category'
+	import { createForm } from 'felte'
+	import { reporter } from '@felte/reporter-svelte'
+	import { validateSchema } from '@felte/validator-zod'
 	import { Category as api } from '$lib/data/category'
+	import { CategorySchema } from '$lib/schema/category'
+	import type { Category } from '$lib/schema/category'
 	import { goto } from '$app/navigation'
+	import TextField from '$lib/components/TextField.svelte'
+	import SaveButton from '$lib/components/SaveButton.svelte'
+	import CancelButton from '$lib/components/CancelButton.svelte'
+	import DeleteButton from '$lib/components/DeleteButton.svelte'
 
-	const save = (e: any) => {
-		const target = e.target
-		const form: HTMLFormElement = target.closest('form')
+	const { form } = createForm<Category>({
+		initialValues: data,
+		async onSubmit(values) {
+			const id = await api.update(values)
+			const url = `/categories/${id}`
+			goto(url)
+		},
+		validate: validateSchema(CategorySchema),
+		extend: [reporter]
+	})
 
-		// Clear previous errors
-		const errors = form.querySelectorAll('.error')
-		const fieldSet: any = form.querySelector('fieldset')
-
-		errors.forEach((error) => {
-			fieldSet.removeChild(error)
-		})
-
-		const formData = new FormData(form)
-		const jsonObject = Object.fromEntries(formData)
-		const results: any = schema.safeParse(jsonObject)
-
-		if (results.success) {
-			api.update(jsonObject)
-			goto('/categories')
-		}
-
-		const issues = results.error.issues
-
-		issues.forEach((issue: any) => {
-			const el: any = form.querySelector(`#${issue.path[0]}`)
-			const span = document.createElement('span')
-
-			span.className = 'error'
-			span.innerText = issue.message
-
-			el.after(span)
-		})
-	}
-
-	const remove = (e: any) => {
-		const target = e.target
-		const form: HTMLFormElement = target.closest('form')
-		const idElement: any = form.querySelector('#CategoryId')
-		const value = idElement.value
-		const id = parseInt(value)
+	const remove = () => {
+		const id = data.CategoryId
 
 		api.remove(id)
 
 		goto('/categories')
 	}
-
 	const cancel = () => {
 		goto('/categories')
 	}
 </script>
 
-<h1>Category</h1>
-<form>
-	<button on:click|preventDefault={save}><Save /> Save</button>
-	<button on:click|preventDefault={remove}><Delete /> Delete</button>
-	<button on:click|preventDefault={cancel}><XSquare /> Cancel</button>
-	<div class="filler" />
-	<fieldset>
-		<label for="CategoryId">Id</label>
-		<input id="CategoryId" name="CategoryId" value={data.CategoryId} readonly />
-		<label for="CategoryName">Name</label>
-		<input id="CategoryName" name="CategoryName" value={data.CategoryName} />
-		<label for="Description">Description</label>
-		<input id="Description" name="Description" value={data.Description} /><br />
-	</fieldset>
+<form use:form>
+	<ion-item>
+		<SaveButton />
+		<DeleteButton on:click={remove} />
+		<CancelButton on:click={cancel} />
+	</ion-item>
+	<TextField name="CategoryId" value={data.CategoryId} />
+	<TextField name="CategoryName" value={data.CategoryName} />
+	<TextField name="Description" value={data.Description} />
 </form>

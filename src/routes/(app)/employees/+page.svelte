@@ -1,55 +1,62 @@
 <script lang="ts">
-	import { Edit, PlusSquare } from 'lucide-svelte'
-	import { goto } from '$app/navigation'
-	import { fetchData } from './store'
-	import type { PageData } from './$types'
-	import Pager from '$lib/components/Pager.svelte'
+	// import { Edit, PlusSquare } from 'lucide-svelte'
+	// import type { Employee } from '$lib/schema/employee'
+	import { Employee as data } from '$lib/data/employee'
+	import { onMount } from 'svelte'
 
-	export let data: PageData
+	let list: any
+	let promise: any = Promise.resolve()
 
-	$: promise = data
-	$: count = promise.meta.count
+	const totalLimit = 300
 
-	const next = async (args: any) => {
-		const offset = args.detail.offset
+	const generateItems = async () => {
+		const count = list.childElementCount + 1
+
+		if (count === totalLimit + 1) {
+			return
+		}
+
+		const offset = 0
 		const limit = 10
-		const url = `?limit=${limit}&offset=${offset}`
 
-		goto(url)
+		promise = await data.fetchPaged(limit, offset)
 
-		promise = await fetchData(limit, offset)
-		count = promise.meta.count
+		// 	count = promise.meta.count
+		const total = count + 50
+
+		for (let i = count; i < total; i++) {
+			const el = document.createElement('ion-item')
+
+			const text = document.createElement('ion-label')
+
+			text.textContent = `Item ${i}`
+
+			el.appendChild(text)
+
+			list.appendChild(el)
+		}
 	}
+
+	const scroll = (event: any) => {
+		generateItems()
+		event.target.complete()
+	}
+
+	onMount(() => {
+		list = document.querySelector('#my-list')
+
+		generateItems()
+	})
 </script>
 
-<h1>Employees</h1>
-<Pager limit={10} {count} on:next={next} />
+<ion-list id="my-list" />
 
-{#await promise}
-	<p>waiting for the promise to resolve...</p>
-{:then value}
-	<table role="grid">
-		<thead>
-			<th scope="col"> Id </th>
-			<th scope="col">Name</th>
-			<th>
-				<a href="/employees/new"><PlusSquare /></a>
-			</th>
-		</thead>
-		<tbody>
-			{#each value.resource as { EmployeeId, FirstName, LastName }}
-				<tr>
-					<td scope="row">
-						{EmployeeId}
-					</td>
-					<td>{FirstName} {LastName}</td>
-					<td>
-						<a href="/employees/{EmployeeId}"><Edit /></a>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-{:catch error}
-	{error}
-{/await}
+<!-- {#each value.resource as { EmployeeId, FirstName, LastName }} -->
+<!-- 		<a href="/employees/{EmployeeId}"><Edit /></a> -->
+<!-- 		{FirstName} -->
+<!-- 		{LastName} -->
+<!-- {/each} -->
+
+<ion-infinite-scroll on:ionInfinite={scroll}>
+	<ion-infinite-scroll-content />
+</ion-infinite-scroll>

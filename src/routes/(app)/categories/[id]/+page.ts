@@ -1,4 +1,5 @@
 import { Category as data } from '$lib/data/category'
+import type { Category } from '$lib/schema/category'
 import { error } from '@sveltejs/kit'
 
 export const load = async ({ params }) => {

@@ -13,6 +13,11 @@
 	import EmployeeRegions from '$lib/components/EmployeeRegions.svelte'
 	import Employees from '$lib/components/Employees.svelte'
 	import Validation from '$lib/components/Validation.svelte'
+	import NumberField from '$lib/components/NumberField.svelte'
+	import TextAreaField from '$lib/components/TextAreaField.svelte'
+	import SaveButton from '$lib/components/SaveButton.svelte'
+	import CancelButton from '$lib/components/CancelButton.svelte'
+	import DeleteButton from '$lib/components/DeleteButton.svelte'
 
 	const { form } = createForm<Employee>({
 		initialValues: data,
@@ -57,43 +62,43 @@
 	}
 </script>
 
-<h1>Employee</h1>
-
+<ion-header>
+	<ion-toolbar>
+		<ion-title>Employee</ion-title>
+	</ion-toolbar>
+</ion-header>
 <form use:form>
-	<button><Save />Save</button>
-	<button on:click|preventDefault={remove}><Delete />Delete</button>
-	<button on:click|preventDefault={territories}><Edit /> Territories</button>
-	<button on:click|preventDefault={cancel}><XSquare /> Cancel</button>
-	<div class="filler" />
-	<fieldset>
-		<label for="EmployeeId">Id</label>
-		<input id="EmployeeId" name="EmployeeId" readonly />
+	<ion-item>
+		<SaveButton />
+		<DeleteButton on:click={remove} />
+		<ion-button on:click|preventDefault={territories} size="default"
+			><Edit /> Territories</ion-button
+		>
+		<CancelButton on:click={cancel} />
+	</ion-item>
 
-		<TextField name="Title" />
-		<TextField name="TitleOfCourtesy" />
+	<NumberField name="EmployeeId" readonly={true} />
+	<TextField name="Title" />
+	<TextField name="TitleOfCourtesy" />
 
-		<DateField name="BirthDate" value={birthDate} />
+	<DateField name="BirthDate" value={birthDate} />
 
-		<TextField name="FirstName" />
-		<TextField name="LastName" />
+	<TextField name="FirstName" />
+	<TextField name="LastName" />
 
-		<DateField name="HireDate" value={hireDate} />
+	<DateField name="HireDate" value={hireDate} />
 
-		<TextField name="Address" />
-		<TextField name="City" />
-		<EmployeeRegions name="Region" />
-		<TextField name="PostalCode" />
-		<TextField name="Country" />
-		<TextField name="HomePhone" />
-		<TextField name="Extension" />
-		<TextField name="Photo" />
+	<TextField name="Address" />
+	<TextField name="City" />
+	<!-- <EmployeeRegions name="Region" /> -->
+	<TextField name="PostalCode" />
+	<TextField name="Country" />
+	<TextField name="HomePhone" />
+	<TextField name="Extension" />
+	<TextField name="Photo" />
+	<TextAreaField name="Notes" />
 
-		<label for="Notes">Notes</label>
-		<textarea name="Notes" id="Notes" rows="5" />
-		<Validation name="Notes" />
+	<Employees name="ReportsTo" value={employeeId} />
 
-		<Employees name="ReportsTo" value={employeeId} />
-
-		<TextField name="PhotoPath" />
-	</fieldset>
+	<TextField name="PhotoPath" />
 </form>
