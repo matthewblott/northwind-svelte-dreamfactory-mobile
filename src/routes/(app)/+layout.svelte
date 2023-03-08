@@ -26,7 +26,7 @@
 			<ion-title>Menu Content</ion-title>
 		</ion-toolbar>
 	</ion-header>
-	<ion-content class="ion-padding">
+	<ion-content>
 		<ion-list on:click={menuClick} on:keydown={menuKeydown}>
 			<ion-item>
 				<a href="/">Home</a>
@@ -65,8 +65,6 @@
 	</ion-content>
 </ion-menu>
 
-<!-- <Menu contentId="main-content" /> -->
-
 <div class="ion-page" id="main-content">
 	<ion-header>
 		<ion-toolbar>
@@ -76,29 +74,7 @@
 			<ion-title>{title}</ion-title>
 		</ion-toolbar>
 	</ion-header>
-	<ion-content class="ion-padding">
+	<ion-content>
 		<slot />
 	</ion-content>
 </div>
-
-<!-- <Menu contentId="main-content" /> -->
-
-<!-- <ion-menu content-id="main-content"> -->
-<!-- 	<ion-header> -->
-<!-- 		<ion-toolbar> -->
-<!-- 			<ion-title>Menu Content</ion-title> -->
-<!-- 		</ion-toolbar> -->
-<!-- 	</ion-header> -->
-<!-- 	<ion-content class="ion-padding">This is the menu content.</ion-content> -->
-<!-- </ion-menu> -->
-<!-- <div class="ion-page" id="main-content"> -->
-<!-- 	<ion-header> -->
-<!-- 		<ion-toolbar> -->
-<!-- 			<ion-buttons slot="start"> -->
-<!-- 				<ion-menu-button /> -->
-<!-- 			</ion-buttons> -->
-<!-- 			<ion-title>Menu</ion-title> -->
-<!-- 		</ion-toolbar> -->
-<!-- 	</ion-header> -->
-<!-- 	<ion-content class="ion-padding"> Tap the button in the toolbar to open the menu. </ion-content> -->
-<!-- </div> -->

@@ -1,39 +1,28 @@
 <script lang="ts">
 	import { Order as data } from '$lib/data/order'
 	import { onMount } from 'svelte'
+	import ListItem from '$lib/components/ListItem.svelte'
+	import { page } from '$app/stores'
 
-	let list: any
+	const limit = 20
 
-	const limit = 15
 	let totalLimit = limit
-
 	let offset = 0
 
-	const generateItems = async () => {
-		const count = list.childElementCount + 1
+	$: items = []
 
-		if (count === totalLimit + 1) {
+	const generateItems = async () => {
+		if (offset >= totalLimit) {
 			return
 		}
 
 		const promise = await data.fetchPaged(limit, offset)
-		const items = promise.resource
 
+		const nextItems = promise.resource
+
+		items = items.concat(nextItems)
 		totalLimit = promise.meta.count
-
 		offset = limit + offset
-
-		items.forEach((item: any) => {
-			const el = document.createElement('ion-item')
-
-			const text = document.createElement('ion-label')
-
-			text.textContent = `# ${item.OrderId}`
-
-			el.appendChild(text)
-
-			list.appendChild(el)
-		})
 	}
 
 	const scroll = (event: any) => {
@@ -42,14 +31,15 @@
 	}
 
 	onMount(() => {
-		list = document.querySelector('#my-list')
-
 		generateItems()
 	})
 </script>
 
-<ion-list id="my-list" />
-
+<ion-list>
+	{#each items as { OrderId, OrderDate }}
+		<ListItem href="{$page.url.pathname}/{OrderId}" text={OrderDate} />
+	{/each}
+</ion-list>
 <ion-infinite-scroll on:ionInfinite={scroll}>
 	<ion-infinite-scroll-content />
 </ion-infinite-scroll>

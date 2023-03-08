@@ -7,8 +7,7 @@
 	import type { Category } from '$lib/schema/category'
 	import { goto } from '$app/navigation'
 	import TextField from '$lib/components/TextField.svelte'
-	import SaveButton from '$lib/components/SaveButton.svelte'
-	import CancelButton from '$lib/components/CancelButton.svelte'
+	import NewItemToolbar from '$lib/components/NewItemToolbar.svelte'
 
 	const { form } = createForm<Category>({
 		async onSubmit(values) {
@@ -22,17 +21,17 @@
 		extend: [reporter]
 	})
 
-	const cancel = () => {
+	const back = () => {
 		goto('/categories')
+	}
+
+	const save = () => {
+		//
 	}
 </script>
 
 <form use:form>
-	<ion-item>
-		<SaveButton />
-		<CancelButton on:click={cancel} />
-	</ion-item>
-
+	<NewItemToolbar on:back={back} on:save={save} />
 	<ion-item>
 		<ion-label position="stacked">Id</ion-label>
 		<ion-input value="[New]" readonly />

@@ -4,12 +4,11 @@
 	import { validateSchema } from '@felte/validator-zod'
 	import { goto } from '$app/navigation'
 	import TextField from '$lib/components/TextField.svelte'
-	import SaveButton from '$lib/components/SaveButton.svelte'
-	import CancelButton from '$lib/components/CancelButton.svelte'
 	import { Customer as api } from '$lib/data/customer'
 	import { CustomerSchema } from '$lib/schema/customer'
 	import type { Customer } from '$lib/schema/customer'
 	import CustomerRegions from '$lib/components/CustomerRegions.svelte'
+	import ItemToolbar from '$lib/components/ItemToolbar.svelte'
 
 	const { form } = createForm<Customer>({
 		async onSubmit(values) {
@@ -28,10 +27,7 @@
 </script>
 
 <form use:form>
-	<ion-item>
-		<SaveButton />
-		<CancelButton on:click={cancel} />
-	</ion-item>
+	<ItemToolbar />
 
 	<TextField name="CustomerId" />
 	<TextField name="CompanyName" />

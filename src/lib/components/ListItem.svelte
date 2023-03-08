@@ -1,9 +1,12 @@
 <script lang="ts">
-	import { logoIonic } from 'ionicons/icons'
+	import { Edit } from 'lucide-svelte'
 	export let text = ''
+	export let href = ''
 </script>
 
 <ion-item>
-	<ion-icon slot="end" icon={logoIonic} />
+	<ion-label slot="end">
+		<a {href}><Edit /></a>
+	</ion-label>
 	<ion-label>{text}</ion-label>
 </ion-item>

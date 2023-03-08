@@ -9,6 +9,4 @@
 	}
 </script>
 
-<ion-button color="danger" on:click|preventDefault={click} size="default"
-	><Delete /> Delete</ion-button
->
+<ion-button on:click|preventDefault={click} size="default"><Delete /> Delete </ion-button>

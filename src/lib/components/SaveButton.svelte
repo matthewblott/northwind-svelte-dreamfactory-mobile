@@ -11,5 +11,7 @@
 </script>
 
 <button style="display: hidden;" id="submit" type="submit" />
-<ion-button color="success" on:click|preventDefault={click} size="default"><Save /> Save</ion-button
->
+<ion-button on:click|preventDefault={click} size="default"
+	><Save />
+	Save
+</ion-button>

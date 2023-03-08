@@ -3,17 +3,14 @@
 	import { onMount } from 'svelte'
 	import { IonPage } from 'ionic-svelte'
 	import { setupIonicBase } from 'ionic-svelte'
-
-	setupIonicBase()
-
-	/* Import all components - or do partial loading - see below */
 	import 'ionic-svelte/components/all'
-
 	import '../theme/variables.css'
 
 	let title = 'Home'
 
 	$: height = 0
+
+	setupIonicBase()
 
 	onMount(() => {
 		SafeArea.getStatusBarHeight().then(({ statusBarHeight }) => {

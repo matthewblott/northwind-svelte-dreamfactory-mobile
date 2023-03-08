@@ -8,9 +8,7 @@
 	import type { Category } from '$lib/schema/category'
 	import { goto } from '$app/navigation'
 	import TextField from '$lib/components/TextField.svelte'
-	import SaveButton from '$lib/components/SaveButton.svelte'
-	import CancelButton from '$lib/components/CancelButton.svelte'
-	import DeleteButton from '$lib/components/DeleteButton.svelte'
+	import ItemToolbar from '$lib/components/ItemToolbar.svelte'
 
 	const { form } = createForm<Category>({
 		initialValues: data,
@@ -23,6 +21,10 @@
 		extend: [reporter]
 	})
 
+	const back = () => {
+		goto('/categories')
+	}
+
 	const remove = () => {
 		const id = data.CategoryId
 
@@ -30,17 +32,13 @@
 
 		goto('/categories')
 	}
-	const cancel = () => {
-		goto('/categories')
+	const save = () => {
+		console.log('save')
 	}
 </script>
 
 <form use:form>
-	<ion-item>
-		<SaveButton />
-		<DeleteButton on:click={remove} />
-		<CancelButton on:click={cancel} />
-	</ion-item>
+	<ItemToolbar on:back={back} on:save={save} on:remove={remove} />
 	<TextField name="CategoryId" value={data.CategoryId} />
 	<TextField name="CategoryName" value={data.CategoryName} />
 	<TextField name="Description" value={data.Description} />

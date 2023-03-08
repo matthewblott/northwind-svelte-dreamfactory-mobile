@@ -52,11 +52,13 @@
 </script>
 
 <form use:form>
-	<ion-item>
+	<ion-toolbar>
+		<!-- <ion-item> -->
 		<SaveButton />
 		<DeleteButton on:click={remove} />
 		<CancelButton on:click={cancel} />
-	</ion-item>
+		<!-- </ion-item> -->
+	</ion-toolbar>
 	<ion-item>
 		<ion-label position="stacked">Id</ion-label>
 		<ion-input name="CustomerId" value={data.CustomerId} readonly />
