@@ -11,33 +11,25 @@
 
 	let items: any = []
 
-	const caption = () => {
-		return capitalCase(name)
-	}
-
 	onMount(async () => {
 		promise = await Employee.fetchAll()
 		items = promise.resource
 	})
 </script>
 
-{#await promise}
-	<p>Loading ...</p>
-{:then}
-	{#if items}
-		<label for={name}>{caption()}</label>
-		<select {name} id={name}>
-			<option value="" />
-			{#each items as { EmployeeId, FirstName, LastName }}
-				{#if EmployeeId === value}
-					<option value={EmployeeId} selected>{LastName}, {FirstName}</option>
-				{:else}
-					<option value={EmployeeId}>{LastName}, {FirstName}</option>
-				{/if}
-			{/each}
-		</select>
-	{/if}
-{:catch error}
-	<p>Something went wrong: {error.message}</p>
-{/await}
-<Validation {name} />
+<ion-item>
+	<ion-label position="stacked">Reports To</ion-label>
+	{#await promise}
+		<p>Loading ...</p>
+	{:then}
+		{#if items}
+			<ion-select placeholder="Select" {value} {name}>
+				{#each items as { EmployeeId, FirstName, LastName }}
+					<ion-select-option value={EmployeeId}>{LastName}, {FirstName}</ion-select-option>
+				{/each}
+			</ion-select>
+		{/if}
+	{:catch error}
+		<p>Something went wrong: {error.message}</p>
+	{/await}
+</ion-item>

@@ -32,8 +32,9 @@
 
 		goto('/categories')
 	}
+
 	const save = () => {
-		console.log('save')
+		//
 	}
 </script>
 

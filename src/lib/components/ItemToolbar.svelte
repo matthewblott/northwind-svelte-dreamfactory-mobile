@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { save, removeCircle, chevronBack } from 'ionicons/icons'
+	export let handler1Text = ''
 
 	import { createEventDispatcher } from 'svelte'
 
@@ -7,6 +8,10 @@
 
 	const back = () => {
 		dispatch('back')
+	}
+
+	const handler1 = () => {
+		dispatch('handler1')
 	}
 
 	const submit = () => {
@@ -33,6 +38,7 @@
 		</ion-button>
 	</ion-buttons>
 	<ion-buttons slot="primary">
+		<ion-button on:click|preventDefault={handler1} on:keydown={keydown}> {handler1Text}</ion-button>
 		<ion-button on:click|preventDefault={submit} on:keydown={keydown}>
 			Save
 			<ion-icon slot="end" icon={save} />

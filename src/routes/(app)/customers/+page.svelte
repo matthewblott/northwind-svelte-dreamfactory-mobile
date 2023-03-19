@@ -3,14 +3,14 @@
 	import { onMount } from 'svelte'
 	import ListItem from '$lib/components/ListItem.svelte'
 	import { page } from '$app/stores'
-	import DeleteButton from '$lib/components/DeleteButton.svelte'
-	import CancelButton from '$lib/components/CancelButton.svelte'
-	import SaveButton from '$lib/components/SaveButton.svelte'
-	import ActionToolbar from '$lib/components/ActionToolbar.svelte'
+	import ListToolbar from '$lib/components/ListToolbar.svelte'
+	import { goto } from '$app/navigation'
 
 	const limit = 20
+
 	let totalLimit = limit
 	let offset = 0
+
 	$: items = []
 
 	const generateItems = async () => {
@@ -35,23 +35,17 @@
 	onMount(() => {
 		generateItems()
 	})
-	const remove = () => {
-		//
+
+	const back = () => {
+		goto('/')
 	}
 
-	const cancel = () => {
-		//
+	const add = () => {
+		goto(`${$page.url.pathname}/new`)
 	}
 </script>
 
-<ion-toolbar>
-	<ActionToolbar />
-	<!-- <ion-item> -->
-	<!-- <SaveButton /> -->
-	<!-- <DeleteButton on:click={remove} /> -->
-	<!-- <CancelButton on:click={cancel} /> -->
-	<!-- </ion-item> -->
-</ion-toolbar>
+<ListToolbar on:back={back} on:add={add} />
 <ion-content>
 	<ion-list>
 		{#each items as { CustomerId, CompanyName }}

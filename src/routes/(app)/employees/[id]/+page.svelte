@@ -1,9 +1,9 @@
 <script lang="ts">
 	export let data: any
+
 	import { createForm, getValue } from 'felte'
 	import { reporter } from '@felte/reporter-svelte'
 	import { validateSchema } from '@felte/validator-zod'
-	import { Save, Delete, Edit, XSquare } from 'lucide-svelte'
 	import { Employee as api } from '$lib/data/employee'
 	import { EmployeeSchema } from '$lib/schema/employee'
 	import type { Employee } from '$lib/schema/employee'
@@ -12,12 +12,9 @@
 	import DateField from '$lib/components/DateField.svelte'
 	import EmployeeRegions from '$lib/components/EmployeeRegions.svelte'
 	import Employees from '$lib/components/Employees.svelte'
-	import Validation from '$lib/components/Validation.svelte'
 	import NumberField from '$lib/components/NumberField.svelte'
 	import TextAreaField from '$lib/components/TextAreaField.svelte'
-	import SaveButton from '$lib/components/SaveButton.svelte'
-	import CancelButton from '$lib/components/CancelButton.svelte'
-	import DeleteButton from '$lib/components/DeleteButton.svelte'
+	import ItemToolbar from '$lib/components/ItemToolbar.svelte'
 
 	const { form } = createForm<Employee>({
 		initialValues: data,
@@ -30,75 +27,52 @@
 		extend: [reporter]
 	})
 
-	let employeeId: number = getValue(data, 'ReportsTo')
-	let hireDate = getValue(data, 'HireDate').substring(0, 10)
-	let birthDate = getValue(data, 'BirthDate').substring(0, 10)
-
 	const territories = () => {
-		const employeeId = getValue(data, 'EmployeeId')
-		goto(`/employees/${employeeId}/territories`)
+		goto(`/employees/${data.EmployeeId}/territories`)
 	}
 
-	const save = (e: any) => {
-		const target = e.target
-		const form: HTMLFormElement = target.closest('form')
-		const button: any = form.querySelector('button[type="submit"]')
-		button.click()
+	const back = () => {
+		goto('/employees')
 	}
 
-	const remove = (e: any) => {
-		const target = e.target
-		const form: HTMLFormElement = target.closest('form')
-		const idElement: any = form.querySelector('#EmployeeId')
-		const value = idElement.value
-		const id = parseInt(value)
+	const remove = () => {
+		const id = data.EmployeeId
 
 		api.remove(id)
 
 		goto('/employees')
 	}
-	const cancel = () => {
-		goto('/employees')
+
+	const save = () => {
+		//
 	}
 </script>
 
-<ion-header>
-	<ion-toolbar>
-		<ion-title>Employee</ion-title>
-	</ion-toolbar>
-</ion-header>
 <form use:form>
-	<ion-item>
-		<SaveButton />
-		<DeleteButton on:click={remove} />
-		<ion-button on:click|preventDefault={territories} size="default"
-			><Edit /> Territories</ion-button
-		>
-		<CancelButton on:click={cancel} />
-	</ion-item>
+	<ItemToolbar
+		on:back={back}
+		on:save={save}
+		on:remove={remove}
+		handler1Text="Territories"
+		on:handler1={territories}
+	/>
 
 	<NumberField name="EmployeeId" readonly={true} />
 	<TextField name="Title" />
 	<TextField name="TitleOfCourtesy" />
-
-	<DateField name="BirthDate" value={birthDate} />
-
+	<DateField name="BirthDate" value={data.BirthDate} />
 	<TextField name="FirstName" />
 	<TextField name="LastName" />
-
-	<DateField name="HireDate" value={hireDate} />
-
+	<DateField name="HireDate" value={data.HireDate} />
 	<TextField name="Address" />
 	<TextField name="City" />
-	<!-- <EmployeeRegions name="Region" /> -->
+	<EmployeeRegions name="Region" value={data.Region} />
 	<TextField name="PostalCode" />
 	<TextField name="Country" />
 	<TextField name="HomePhone" />
 	<TextField name="Extension" />
 	<TextField name="Photo" />
 	<TextAreaField name="Notes" />
-
-	<Employees name="ReportsTo" value={employeeId} />
-
+	<Employees name="ReportsTo" value={data.ReportsTo} />
 	<TextField name="PhotoPath" />
 </form>

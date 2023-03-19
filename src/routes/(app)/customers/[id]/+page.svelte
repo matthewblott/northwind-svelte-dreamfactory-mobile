@@ -3,17 +3,13 @@
 	import { createForm, getValue } from 'felte'
 	import { reporter } from '@felte/reporter-svelte'
 	import { validateSchema } from '@felte/validator-zod'
-	import { Save, Delete, XSquare } from 'lucide-svelte'
 	import { Customer as api } from '$lib/data/customer'
 	import { CustomerSchema } from '$lib/schema/customer'
 	import type { Customer } from '$lib/schema/customer'
 	import { goto } from '$app/navigation'
 	import CustomerRegions from '$lib/components/CustomerRegions.svelte'
-	import Validation from '$lib/components/Validation.svelte'
 	import TextField from '$lib/components/TextField.svelte'
-	import SaveButton from '$lib/components/SaveButton.svelte'
-	import CancelButton from '$lib/components/CancelButton.svelte'
-	import DeleteButton from '$lib/components/DeleteButton.svelte'
+	import ItemToolbar from '$lib/components/ItemToolbar.svelte'
 
 	const { form } = createForm<Customer>({
 		initialValues: data,
@@ -28,37 +24,25 @@
 
 	let region = getValue(data, 'Region')
 
-	const save = (e: any) => {
-		const target = e.target
-		const form: HTMLFormElement = target.closest('form')
-		const button: any = form.querySelector('button[type="submit"]')
-		button.click()
+	const back = () => {
+		goto('/customers')
 	}
 
-	const remove = (e: any) => {
-		const target = e.target
-		const form: HTMLFormElement = target.closest('form')
-		const idElement: any = form.querySelector('#CustomerId')
-		const value = idElement.value
-		const id = value
+	const remove = () => {
+		const id = data.CustomerId
 
 		api.remove(id)
 
 		goto('/customers')
 	}
-	const cancel = () => {
-		goto('/customers')
+
+	const save = () => {
+		//
 	}
 </script>
 
 <form use:form>
-	<ion-toolbar>
-		<!-- <ion-item> -->
-		<SaveButton />
-		<DeleteButton on:click={remove} />
-		<CancelButton on:click={cancel} />
-		<!-- </ion-item> -->
-	</ion-toolbar>
+	<ItemToolbar on:back={back} on:save={save} on:remove={remove} />
 	<ion-item>
 		<ion-label position="stacked">Id</ion-label>
 		<ion-input name="CustomerId" value={data.CustomerId} readonly />

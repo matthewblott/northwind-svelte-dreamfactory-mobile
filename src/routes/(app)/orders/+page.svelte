@@ -3,6 +3,8 @@
 	import { onMount } from 'svelte'
 	import ListItem from '$lib/components/ListItem.svelte'
 	import { page } from '$app/stores'
+	import ListToolbar from '$lib/components/ListToolbar.svelte'
+	import { goto } from '$app/navigation'
 
 	const limit = 20
 
@@ -33,13 +35,24 @@
 	onMount(() => {
 		generateItems()
 	})
+
+	const back = () => {
+		goto('/')
+	}
+
+	const add = () => {
+		goto(`${$page.url.pathname}/new`)
+	}
 </script>
 
-<ion-list>
-	{#each items as { OrderId, OrderDate }}
-		<ListItem href="{$page.url.pathname}/{OrderId}" text={OrderDate} />
-	{/each}
-</ion-list>
-<ion-infinite-scroll on:ionInfinite={scroll}>
-	<ion-infinite-scroll-content />
-</ion-infinite-scroll>
+<ListToolbar on:back={back} on:add={add} />
+<ion-content>
+	<ion-list>
+		{#each items as { CustomerId, OrderId, OrderDate }}
+			<ListItem href="{$page.url.pathname}/{OrderId}" text={OrderDate + ' - ' + CustomerId} />
+		{/each}
+	</ion-list>
+	<ion-infinite-scroll on:ionInfinite={scroll}>
+		<ion-infinite-scroll-content />
+	</ion-infinite-scroll>
+</ion-content>

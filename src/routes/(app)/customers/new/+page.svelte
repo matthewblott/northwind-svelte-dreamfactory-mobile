@@ -8,11 +8,10 @@
 	import { CustomerSchema } from '$lib/schema/customer'
 	import type { Customer } from '$lib/schema/customer'
 	import CustomerRegions from '$lib/components/CustomerRegions.svelte'
-	import ItemToolbar from '$lib/components/ItemToolbar.svelte'
+	import NewItemToolbar from '$lib/components/NewItemToolbar.svelte'
 
 	const { form } = createForm<Customer>({
 		async onSubmit(values) {
-			delete values.CustomerId
 			const id = await api.create(values)
 			const url = `/customers/${id}`
 			goto(url)
@@ -21,13 +20,17 @@
 		extend: [reporter]
 	})
 
-	const cancel = () => {
+	const back = () => {
 		goto('/customers')
+	}
+
+	const save = () => {
+		//
 	}
 </script>
 
 <form use:form>
-	<ItemToolbar />
+	<NewItemToolbar on:back={back} on:save={save} />
 
 	<TextField name="CustomerId" />
 	<TextField name="CompanyName" />

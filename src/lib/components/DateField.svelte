@@ -12,10 +12,10 @@
 
 <ion-item>
 	<ion-label position="stacked">{capitalCase(name)}</ion-label>
-	<ion-datetime-button datetime="datetime" />
+	<ion-datetime-button datetime={name} />
 
 	<ion-modal>
-		<ion-datetime id="datetime" presentation="date" {value} />
+		<ion-datetime id={name} presentation="date" {value} />
 	</ion-modal>
 
 	<Validation {name} />
