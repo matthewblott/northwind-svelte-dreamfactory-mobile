@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { XSquare } from 'lucide-svelte'
 	import { createEventDispatcher } from 'svelte'
 	import { onMount } from 'svelte'
 
@@ -73,6 +74,10 @@
 		buttons.last.enabled = false
 	}
 
+	const cancel = () => {
+		dispatch('cancel')
+	}
+
 	onMount(() => {
 		offset = 0
 		console.log(count)
@@ -100,4 +105,5 @@
 	{:else}
 		<ion-button disabled size="default">Last</ion-button>
 	{/if}
+	<ion-button on:click|preventDefault={cancel} size="default"><XSquare /> Cancel</ion-button>
 </ion-item>

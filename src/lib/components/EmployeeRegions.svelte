@@ -14,22 +14,19 @@
 	})
 </script>
 
-{#await promise}
-	<p>Loading ...</p>
-{:then}
-	{#if items}
-		<label for={name}>Region</label>
-		<select {name} id={name}>
-			<option value="" />
-			{#each items as { Region }}
-				{#if Region === value}
-					<option value={Region} selected>{Region}</option>
-				{:else}
-					<option value={Region}>{Region}</option>
-				{/if}
-			{/each}
-		</select>
-	{/if}
-{:catch error}
-	<p>Something went wrong: {error.message}</p>
-{/await}
+<ion-item>
+	<ion-label position="stacked">Region</ion-label>
+	{#await promise}
+		<p>Loading ...</p>
+	{:then}
+		{#if items}
+			<ion-select placeholder="Select" {value} {name}>
+				{#each items as { Region }}
+					<ion-select-option value={Region}>{Region}</ion-select-option>
+				{/each}
+			</ion-select>
+		{/if}
+	{:catch error}
+		<p>Something went wrong: {error.message}</p>
+	{/await}
+</ion-item>

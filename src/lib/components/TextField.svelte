@@ -6,6 +6,8 @@
 	export let value = ''
 </script>
 
-<label for={name}>{capitalCase(name)}</label>
-<input id={name} {name} {value} />
-<Validation {name} />
+<ion-item>
+	<ion-label position="stacked">{capitalCase(name)}</ion-label>
+	<ion-input {value} {name} />
+	<Validation {name} />
+</ion-item>

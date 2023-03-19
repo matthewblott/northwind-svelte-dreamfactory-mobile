@@ -2,7 +2,6 @@
 	import { createForm } from 'felte'
 	import { reporter } from '@felte/reporter-svelte'
 	import { validateSchema } from '@felte/validator-zod'
-	import { Save, XSquare } from 'lucide-svelte'
 	import { Employee as api } from '$lib/data/employee'
 	import { EmployeeSchema } from '$lib/schema/employee'
 	import type { Employee } from '$lib/schema/employee'
@@ -12,6 +11,7 @@
 	import EmployeeRegions from '$lib/components/EmployeeRegions.svelte'
 	import Employees from '$lib/components/Employees.svelte'
 	import Validation from '$lib/components/Validation.svelte'
+	import NewItemToolbar from '$lib/components/NewItemToolbar.svelte'
 
 	const { form } = createForm<Employee>({
 		async onSubmit(values) {
@@ -25,46 +25,46 @@
 		extend: [reporter]
 	})
 
-	const cancel = () => {
+	const back = () => {
 		goto('/employees')
+	}
+
+	const save = () => {
+		//
 	}
 </script>
 
-<h1>Employee</h1>
-
 <form use:form>
-	<button><Save />Save</button>
-	<button on:click|preventDefault={cancel}><XSquare /> Cancel</button>
-	<div class="filler" />
-	<fieldset>
-		<label for="EmployeeId">Id</label>
-		<input id="EmployeeId" value="[New]" readonly />
+	<NewItemToolbar on:back={back} on:save={save} />
+	<ion-item>
+		<ion-label position="stacked">Id</ion-label>
+		<ion-input value="[New]" readonly />
 		<input type="number" name="EmployeeId" value="0" style="display: none;" />
+	</ion-item>
 
-		<TextField name="Title" />
-		<TextField name="TitleOfCourtesy" />
-		<DateField name="BirthDate" />
+	<TextField name="Title" />
+	<TextField name="TitleOfCourtesy" />
+	<DateField name="BirthDate" />
 
-		<TextField name="FirstName" />
-		<TextField name="LastName" />
+	<TextField name="FirstName" />
+	<TextField name="LastName" />
 
-		<DateField name="HireDate" />
+	<DateField name="HireDate" />
 
-		<TextField name="Address" />
-		<TextField name="City" />
-		<EmployeeRegions name="Region" />
-		<TextField name="PostalCode" />
-		<TextField name="Country" />
-		<TextField name="HomePhone" />
-		<TextField name="Extension" />
-		<TextField name="Photo" />
+	<TextField name="Address" />
+	<TextField name="City" />
+	<EmployeeRegions name="Region" />
+	<TextField name="PostalCode" />
+	<TextField name="Country" />
+	<TextField name="HomePhone" />
+	<TextField name="Extension" />
+	<TextField name="Photo" />
 
-		<label for="Notes">Notes</label>
-		<textarea name="Notes" id="Notes" rows="5" />
-		<Validation name="Notes" />
+	<label for="Notes">Notes</label>
+	<textarea name="Notes" id="Notes" rows="5" />
+	<Validation name="Notes" />
 
-		<Employees name="ReportsTo" />
+	<Employees name="ReportsTo" />
 
-		<TextField name="PhotoPath" />
-	</fieldset>
+	<TextField name="PhotoPath" />
 </form>

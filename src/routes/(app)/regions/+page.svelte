@@ -1,49 +1,45 @@
-<script>
-	import { Region } from '$lib/data/region'
-	import { Edit, PlusSquare } from 'lucide-svelte'
+<script lang="ts">
+	import { Region as data } from '$lib/data/region'
 	import { onMount } from 'svelte'
-	import Pager from '$lib/components/Pager.svelte'
+	import ListItem from '$lib/components/ListItem.svelte'
+	import { page } from '$app/stores'
 
-	let promise = Promise.resolve([])
+	const limit = 20
+
+	let totalLimit = limit
+	let offset = 0
 
 	$: items = []
 
-	onMount(async () => {
-		promise = await Region.fetchAll()
-		items = promise.resource
+	const generateItems = async () => {
+		if (offset >= totalLimit) {
+			return
+		}
+
+		const promise = await data.fetchPaged(limit, offset)
+
+		const nextItems = promise.resource
+
+		items = items.concat(nextItems)
+		totalLimit = promise.meta.count
+		offset = limit + offset
+	}
+
+	const scroll = (event: any) => {
+		generateItems()
+		event.target.complete()
+	}
+
+	onMount(() => {
+		generateItems()
 	})
 </script>
 
-<h1>Regions</h1>
-
-{#await promise}
-	<p>Loading ...</p>
-{:then}
-	{#if items}
-		<Pager />
-		<table role="grid">
-			<thead>
-				<th scope="col"> Id </th>
-				<th scope="col">Description</th>
-				<th>
-					<a href="#" disabled><PlusSquare /></a>
-				</th>
-			</thead>
-			<tbody>
-				{#each items as { RegionId, RegionDescription }}
-					<tr>
-						<th scope="row">
-							{RegionId}
-						</th>
-						<td>{RegionDescription}</td>
-						<td>
-							<a href="/regions/{RegionId}"><Edit /></a>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-	{/if}
-{:catch error}
-	<p>Something went wrong: {error.message}</p>
-{/await}
+<ion-list>
+	{#each items as { RegionId, RegionDescription }}
+		<ListItem href="{$page.url.pathname}/{RegionId}" text={RegionDescription} />
+	{/each}
+</ion-list>
+<ion-infinite-scroll on:ionInfinite={scroll}>
+	<ion-infinite-scroll-content />
+</ion-infinite-scroll>

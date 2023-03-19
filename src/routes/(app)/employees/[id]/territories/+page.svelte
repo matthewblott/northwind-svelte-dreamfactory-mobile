@@ -1,63 +1,57 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
 	import { Edit, PlusSquare, XSquare } from 'lucide-svelte'
-	import { fetchData } from './store'
 	import { goto } from '$app/navigation'
-	import Pager from '$lib/components/Pager.svelte'
+	import { fetchData } from './store'
+	import type { PageData } from './$types'
+	import PagerWithCancel from '$lib/components/PagerWithCancel.svelte'
 	import { page } from '$app/stores'
 
 	const pathname = $page.url.pathname
 	const paths = pathname.split('/').filter((item) => item !== '')
 	const employeeId = parseInt(paths[1])
 
-	$: items = []
-	$: count = 0
+	export let data: PageData
 
-	const next = (args: any) => {
+	$: promise = data
+	$: count = promise.meta.count
+
+	const next = async (args: any) => {
 		const offset = args.detail.offset
-		update(offset)
-	}
-
-	const update = async (offset = 0) => {
 		const limit = 10
-
-		const data = await fetchData(limit, offset, employeeId)
 		const url = `/employees/${employeeId}/territories?limit=${limit}&offset=${offset}`
 
 		goto(url)
 
-		count = data.meta.count
-		items = data.resource
+		promise = await fetchData(limit, offset)
+		count = promise.meta.count
 	}
+
 	const cancel = () => {
 		goto(`/employees/${employeeId}`)
 	}
-	onMount(() => {
-		update()
-	})
 </script>
 
-<h1>Territories</h1>
+<ion-header>
+	<ion-toolbar>
+		<ion-title>Territories</ion-title>
+	</ion-toolbar>
+</ion-header>
+<PagerWithCancel limit={10} {count} on:next={next} on:cancel={cancel} />
 
-<Pager limit={10} {count} on:next={next} />
-<button on:click|preventDefault={cancel}><XSquare /> Cancel</button>
-<table role="grid">
-	<thead>
-		<th scope="col">Id</th>
-		<th scope="col">Description</th>
-		<th>
-			<a href="/employees/{employeeId}/territories/new"><PlusSquare /></a>
-		</th>
-	</thead>
-	<tbody>
-		{#each items as { EmployeeId, TerritoryId, TerritoryDescription }}
-			<tr>
-				<td scope="row">{TerritoryId}</td>
-				<td>{TerritoryDescription}</td>
-				<td>
-					<a href="/employees/{EmployeeId}/territories/{TerritoryId}"><Edit /></a>
-				</td>
-			</tr>
+{#await promise}
+	<p>waiting for the promise to resolve...</p>
+{:then value}
+	<ion-list>
+		<ion-item>
+			<a href="/territories/new"><PlusSquare /></a> New
+		</ion-item>
+		{#each value.resource as { EmployeeId, TerritoryId, TerritoryDescription }}
+			<ion-item>
+				<a href="/employees/{EmployeeId}/territories/{TerritoryId}"><Edit /></a>
+				{TerritoryDescription}
+			</ion-item>
 		{/each}
-	</tbody>
-</table>
+	</ion-list>
+{:catch error}
+	{error}
+{/await}

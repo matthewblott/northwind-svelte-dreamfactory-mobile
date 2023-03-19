@@ -1,55 +1,58 @@
 <script lang="ts">
-	import { Edit, PlusSquare } from 'lucide-svelte'
+	import { Category as data } from '$lib/data/category'
+	import { onMount } from 'svelte'
+	import ListItem from '$lib/components/ListItem.svelte'
+	import { page } from '$app/stores'
+	import ListToolbar from '$lib/components/ListToolbar.svelte'
 	import { goto } from '$app/navigation'
-	import { fetchData } from './store'
-	import type { PageData } from './$types'
-	import Pager from '$lib/components/Pager.svelte'
 
-	export let data: PageData
+	const limit = 20
 
-	$: promise = data
-	$: count = promise.meta.count
+	let totalLimit = limit
+	let offset = 0
 
-	const next = async (args: any) => {
-		const offset = args.detail.offset
-		const limit = 10
-		const url = `?limit=${limit}&offset=${offset}`
+	$: items = []
 
-		goto(url)
+	const generateItems = async () => {
+		if (offset >= totalLimit) {
+			return
+		}
 
-		promise = await fetchData(limit, offset)
-		count = promise.meta.count
+		const promise = await data.fetchPaged(limit, offset)
+
+		const nextItems = promise.resource
+
+		items = items.concat(nextItems)
+		totalLimit = promise.meta.count
+		offset = limit + offset
+	}
+
+	const scroll = (event: any) => {
+		generateItems()
+		event.target.complete()
+	}
+
+	onMount(() => {
+		generateItems()
+	})
+
+	const back = () => {
+		goto('/')
+	}
+
+	const add = () => {
+		goto(`${$page.url.pathname}/new`)
 	}
 </script>
 
-<h1>Categories</h1>
-<Pager limit={10} {count} on:next={next} />
-
-{#await promise}
-	<p>waiting for the promise to resolve...</p>
-{:then value}
-	<table role="grid">
-		<thead>
-			<th scope="col"> Id </th>
-			<th scope="col">Name</th>
-			<th>
-				<a href="/categories/new"><PlusSquare /></a>
-			</th>
-		</thead>
-		<tbody>
-			{#each value.resource as { CategoryId, CategoryName }}
-				<tr>
-					<td scope="row">
-						{CategoryId}
-					</td>
-					<td>{CategoryName}</td>
-					<td>
-						<a href="/categories/{CategoryId}"><Edit /></a>
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-{:catch error}
-	{error}
-{/await}
+<ListToolbar on:back={back} on:add={add} />
+<ion-content>
+	<ion-list>
+		{#each items as { CategoryId, CategoryName }}
+			<ListItem href="{$page.url.pathname}/{CategoryId}" text={CategoryName} />
+		{/each}
+	</ion-list>
+	<ion-infinite-scroll on:ionInfinite={scroll}>
+		<ion-infinite-scroll-content />
+	</ion-infinite-scroll>
+</ion-content>

@@ -3,20 +3,11 @@
 	import { capitalCase } from 'change-case'
 
 	export let name = ''
-	export let value = new Date().toJSON().slice(0, 10)
-
-	const fix = (e: any) => {
-		value = e.target.value || value
-	}
+	export let value = ''
 </script>
 
 <ion-item>
 	<ion-label position="stacked">{capitalCase(name)}</ion-label>
-	<ion-datetime-button datetime={name} />
-
-	<ion-modal>
-		<ion-datetime id={name} presentation="date" {value} />
-	</ion-modal>
-
+	<ion-textarea {value} {name} rows="5" />
 	<Validation {name} />
 </ion-item>

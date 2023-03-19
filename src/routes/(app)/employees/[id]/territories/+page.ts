@@ -1,12 +1,14 @@
 import { navigating } from '$app/stores'
-import { Customer as data } from '$lib/data/customer'
+import { EmployeeTerritory as data } from '$lib/data/employee-territory'
 import { error } from '@sveltejs/kit'
 import type { PageLoad } from './$types'
 
 export const load: PageLoad = (async ({ params }) => {
 	const limit = 10
 	const offset = 0
-	const items = await data.fetchPaged(limit, offset)
+	const employeeId = parseInt(params.id)
+	const filter = `EmployeeId=${employeeId}`
+	const items = await data.fetchFilteredPaged(limit, offset, filter)
 
 	if (items) {
 		return items

@@ -1,8 +1,11 @@
 import { z } from 'zod'
 
-const Category = z.object({
+const CategorySchema = z.object({
+	CategoryId: z.number(),
 	CategoryName: z.string().min(2).max(10),
 	Description: z.string().max(20)
 })
 
-export { Category }
+type Category = z.infer<typeof CategorySchema>
+
+export { CategorySchema, Category }
