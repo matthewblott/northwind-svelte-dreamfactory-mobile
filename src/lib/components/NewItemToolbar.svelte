@@ -11,7 +11,7 @@
 
 	const submit = () => {
 		dispatch('save')
-		const button: any = document.querySelector('#submit')
+		const button: HTMLButtonElement = document.querySelector('#submit')
 		button.click()
 	}
 
