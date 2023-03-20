@@ -1,38 +1,42 @@
 <script lang="ts">
 	import { Territory as api } from '$lib/data/territory'
 	import { onMount } from 'svelte'
-	import Validation from './Validation.svelte'
 
 	let promise: any = Promise.resolve()
 
-	export let value: number
-	export let name: string = 'Territory'
+	export let value: string
+	export let name: string = 'TerritoryId'
 
 	let items: any = []
 
 	onMount(async () => {
 		promise = await api.fetchAll()
 		items = promise.resource
+
+		document.querySelector('ion-select')?.addEventListener('ionChange', (e: any) => {
+			value = e.target.value
+			const el: HTMLInputElement =
+				document.querySelector(`input[name="${name}"]`) ?? document.createElement('input')
+			el.value = value
+		})
 	})
 </script>
 
-{#await promise}
-	<p>Loading ...</p>
-{:then}
-	{#if items}
-		<label for={name}>Territory</label>
-		<select {name} id={name}>
-			<option />
-			{#each items as { TerritoryId, TerritoryDescription }}
-				{#if TerritoryId === value}
-					<option value={TerritoryId} selected>{TerritoryDescription}</option>
-				{:else}
-					<option value={TerritoryId}>{TerritoryDescription}</option>
-				{/if}
-			{/each}
-		</select>
-	{/if}
-{:catch error}
-	<p>Something went wrong: {error.message}</p>
-{/await}
-<Validation {name} />
+<input type="hidden" {name} {value} />
+
+<ion-item>
+	<ion-label position="stacked">Territory</ion-label>
+	{#await promise}
+		<p>Loading ...</p>
+	{:then}
+		{#if items}
+			<ion-select placeholder="Select" {value}>
+				{#each items as { TerritoryId, TerritoryDescription }}
+					<ion-select-option value={TerritoryId}>{TerritoryDescription}</ion-select-option>
+				{/each}
+			</ion-select>
+		{/if}
+	{:catch error}
+		<p>Something went wrong: {error.message}</p>
+	{/await}
+</ion-item>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let data: any
+	import type { PageData } from './$types'
 	import { createForm, getValue } from 'felte'
 	import { reporter } from '@felte/reporter-svelte'
 	import { validateSchema } from '@felte/validator-zod'
@@ -10,6 +10,8 @@
 	import CustomerRegions from '$lib/components/CustomerRegions.svelte'
 	import TextField from '$lib/components/TextField.svelte'
 	import ItemToolbar from '$lib/components/ItemToolbar.svelte'
+
+	export let data: PageData
 
 	const { form } = createForm<Customer>({
 		initialValues: data,

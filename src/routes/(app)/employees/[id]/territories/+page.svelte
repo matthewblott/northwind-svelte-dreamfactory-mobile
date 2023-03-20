@@ -1,57 +1,63 @@
 <script lang="ts">
-	import { Edit, PlusSquare, XSquare } from 'lucide-svelte'
-	import { goto } from '$app/navigation'
-	import { fetchData } from './store'
-	import type { PageData } from './$types'
-	import PagerWithCancel from '$lib/components/PagerWithCancel.svelte'
 	import { page } from '$app/stores'
+	import { EmployeeTerritory as data } from '$lib/data/employee-territory'
+	import { onMount } from 'svelte'
+	import ListItem from '$lib/components/ListItem.svelte'
+	import ListToolbar from '$lib/components/ListToolbar.svelte'
+	import { goto } from '$app/navigation'
 
 	const pathname = $page.url.pathname
 	const paths = pathname.split('/').filter((item) => item !== '')
 	const employeeId = parseInt(paths[1])
+	const limit = 20
 
-	export let data: PageData
+	let totalLimit = limit
+	let offset = 0
 
-	$: promise = data
-	$: count = promise.meta.count
+	$: items = []
 
-	const next = async (args: any) => {
-		const offset = args.detail.offset
-		const limit = 10
-		const url = `/employees/${employeeId}/territories?limit=${limit}&offset=${offset}`
+	const generateItems = async () => {
+		if (offset >= totalLimit) {
+			return
+		}
 
-		goto(url)
+		const filter = `EmployeeId=${employeeId}`
 
-		promise = await fetchData(limit, offset)
-		count = promise.meta.count
+		const promise = await data.fetchFilteredPaged(limit, offset, filter)
+
+		const nextItems = promise.resource
+
+		items = items.concat(nextItems)
+		totalLimit = promise.meta.count
+		offset = limit + offset
 	}
 
-	const cancel = () => {
+	const scroll = (event: any) => {
+		generateItems()
+		event.target.complete()
+	}
+
+	onMount(() => {
+		generateItems()
+	})
+
+	const back = () => {
 		goto(`/employees/${employeeId}`)
+	}
+
+	const add = () => {
+		goto(`${$page.url.pathname}/new`)
 	}
 </script>
 
-<ion-header>
-	<ion-toolbar>
-		<ion-title>Territories</ion-title>
-	</ion-toolbar>
-</ion-header>
-<PagerWithCancel limit={10} {count} on:next={next} on:cancel={cancel} />
-
-{#await promise}
-	<p>waiting for the promise to resolve...</p>
-{:then value}
+<ListToolbar on:back={back} on:add={add} />
+<ion-content>
 	<ion-list>
-		<ion-item>
-			<a href="/territories/new"><PlusSquare /></a> New
-		</ion-item>
-		{#each value.resource as { EmployeeId, TerritoryId, TerritoryDescription }}
-			<ion-item>
-				<a href="/employees/{EmployeeId}/territories/{TerritoryId}"><Edit /></a>
-				{TerritoryDescription}
-			</ion-item>
+		{#each items as { EmployeeId, TerritoryId, TerritoryDescription }}
+			<ListItem href="{$page.url.pathname}/{TerritoryId}" text={TerritoryDescription} />
 		{/each}
 	</ion-list>
-{:catch error}
-	{error}
-{/await}
+	<ion-infinite-scroll on:ionInfinite={scroll}>
+		<ion-infinite-scroll-content />
+	</ion-infinite-scroll>
+</ion-content>
