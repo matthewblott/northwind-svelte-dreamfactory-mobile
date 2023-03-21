@@ -2,7 +2,6 @@
 	import { createForm } from 'felte'
 	import { reporter } from '@felte/reporter-svelte'
 	import { validateSchema } from '@felte/validator-zod'
-	import { Save, XSquare } from 'lucide-svelte'
 	import { Product as api } from '$lib/data/product'
 	import { ProductSchema } from '$lib/schema/product'
 	import type { Product } from '$lib/schema/product'
@@ -12,6 +11,7 @@
 	import NumberField from '$lib/components/NumberField.svelte'
 	import TextField from '$lib/components/TextField.svelte'
 	import CheckboxField from '$lib/components/CheckboxField.svelte'
+	import NewItemToolbar from '$lib/components/NewItemToolbar.svelte'
 
 	const { form } = createForm<Product>({
 		async onSubmit(values) {
@@ -43,29 +43,30 @@
 		extend: [reporter]
 	})
 
-	const cancel = () => {
+	const back = () => {
 		goto('/products')
+	}
+
+	const save = () => {
+		//
 	}
 </script>
 
-<h1>Product</h1>
-
 <form use:form>
-	<button><Save />Save</button>
-	<button on:click|preventDefault={cancel}><XSquare /> Cancel</button>
-	<div class="filler" />
-	<fieldset>
-		<label for="ProductId">Id</label>
-		<input id="ProductId" value="[New]" readonly />
+	<NewItemToolbar on:back={back} on:save={save} />
+	<ion-item>
+		<ion-label position="stacked">Id</ion-label>
+		<ion-input value="[New]" readonly />
 		<input type="number" name="ProductId" value="0" style="display: none;" />
-		<TextField name="ProductName" />
-		<Categories name="CategoryId" />
-		<Suppliers name="SupplierId" />
-		<TextField name="QuantityPerUnit" />
-		<NumberField name="UnitPrice" />
-		<NumberField name="UnitsInStock" />
-		<NumberField name="UnitsOnOrder" />
-		<NumberField name="ReorderLevel" />
-		<CheckboxField name="Discontinued" />
-	</fieldset>
+	</ion-item>
+
+	<TextField name="ProductName" />
+	<Categories name="CategoryId" />
+	<Suppliers name="SupplierId" />
+	<TextField name="QuantityPerUnit" />
+	<NumberField name="UnitPrice" />
+	<NumberField name="UnitsInStock" />
+	<NumberField name="UnitsOnOrder" />
+	<NumberField name="ReorderLevel" />
+	<CheckboxField name="Discontinued" />
 </form>

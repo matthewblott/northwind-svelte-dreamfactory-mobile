@@ -1,19 +1,20 @@
 <script lang="ts">
-	export let data: any
-	import { createForm, getValue } from 'felte'
+	import type { PageData } from './$types'
+	import { createForm } from 'felte'
 	import { reporter } from '@felte/reporter-svelte'
 	import { validateSchema } from '@felte/validator-zod'
-	import { Save, Delete, XSquare } from 'lucide-svelte'
+	import { goto } from '$app/navigation'
+	import ItemToolbar from '$lib/components/ItemToolbar.svelte'
 	import { Product as api } from '$lib/data/product'
 	import { ProductSchema } from '$lib/schema/product'
 	import type { Product } from '$lib/schema/product'
-	import { goto } from '$app/navigation'
-	import Validation from '$lib/components/Validation.svelte'
 	import Categories from '$lib/components/Categories.svelte'
 	import Suppliers from '$lib/components/Suppliers.svelte'
 	import NumberField from '$lib/components/NumberField.svelte'
 	import TextField from '$lib/components/TextField.svelte'
 	import CheckboxField from '$lib/components/CheckboxField.svelte'
+
+	export let data: PageData
 
 	const { form } = createForm<Product>({
 		initialValues: data,
@@ -26,46 +27,34 @@
 		extend: [reporter]
 	})
 
-	let categoryId: number = getValue(data, 'CategoryId')
-	let supplierId: number = getValue(data, 'SupplierId')
-	let discontinued: boolean = Boolean(getValue(data, 'Discontinued'))
+	const back = () => {
+		goto('/products')
+	}
 
-	const remove = (e: any) => {
-		const target = e.target
-		const form: HTMLFormElement = target.closest('form')
-		const idElement: any = form.querySelector('#ProductId')
-		const value = idElement.value
-		const id = parseInt(value)
+	const remove = () => {
+		const id = data.ProductId
 
 		api.remove(id)
 
 		goto('/products')
 	}
-	const cancel = () => {
-		goto('/products')
+
+	const save = () => {
+		//
 	}
 </script>
 
-<h1>Product</h1>
-
 <form use:form>
-	<button><Save />Save</button>
-	<button on:click|preventDefault={remove}><Delete />Delete</button>
-	<button on:click|preventDefault={cancel}><XSquare /> Cancel</button>
-	<div class="filler" />
-	<fieldset>
-		<label for="ProductId">Id</label>
-		<input id="ProductId" name="ProductId" readonly />
-		<label for="ProductDescription">Description</label>
-		<input id="ProductDescription" name="ProductName" />
-		<Validation name="ProductName" />
-		<Categories name="CategoryId" value={categoryId} />
-		<Suppliers name="SupplierId" value={supplierId} />
-		<TextField name="QuantityPerUnit" />
-		<NumberField name="UnitPrice" />
-		<NumberField name="UnitsInStock" />
-		<NumberField name="UnitsOnOrder" />
-		<NumberField name="ReorderLevel" />
-		<CheckboxField name="Discontinued" checked={discontinued} />
-	</fieldset>
+	<ItemToolbar on:back={back} on:save={save} on:remove={remove} />
+
+	<NumberField name="ProductId" readonly />
+	<TextField name="ProductName" />
+	<Categories name="CategoryId" value={data.CategoryId} />
+	<Suppliers name="SupplierId" value={data.SupplierId} />
+	<TextField name="QuantityPerUnit" />
+	<NumberField name="UnitPrice" />
+	<NumberField name="UnitsInStock" />
+	<NumberField name="UnitsOnOrder" />
+	<NumberField name="ReorderLevel" />
+	<CheckboxField name="Discontinued" checked={Boolean(data.Discontinued)} />
 </form>

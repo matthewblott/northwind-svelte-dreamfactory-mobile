@@ -6,10 +6,8 @@
 	export let checked: boolean = false
 </script>
 
-<label for={name}>{capitalCase(name)}</label>
-{#if checked}
-	<input type="checkbox" id={name} {name} checked />
-{:else}
-	<input type="checkbox" id={name} {name} />
-{/if}
-<Validation {name} />
+<ion-item>
+	<ion-checkbox slot="start" {checked} />
+	<ion-label>{capitalCase(name)}</ion-label>
+	<Validation {name} />
+</ion-item>
